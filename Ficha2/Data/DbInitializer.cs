@@ -20,9 +20,9 @@ namespace Ficha2.Data
 
             var categorias = new Category[]
             {
-                new Category {name= "Programing", description="algoritmos e programacao area courses"},
-                new Category {name="administracao", description="administracao publica e gerenciamento de negocio"},
-                new Category {name="comunicacao", description=" negocios e comunicaocao instutucional cursos" }
+                new Category {name= "Programing", description="algoritmos e programacao area courses",date=DateTime.Now},
+                new Category {name="administracao", description="administracao publica e gerenciamento de negocio",date=DateTime.Now},
+                new Category {name="comunicacao", description=" negocios e comunicaocao instutucional cursos",date=DateTime.Now }
             };
             _context.Category.AddRange(categorias);
 

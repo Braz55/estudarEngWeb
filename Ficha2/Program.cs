@@ -1,39 +1,48 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Ficha2;
 using Ficha2.Data;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+
 var builder = WebApplication.CreateBuilder(args);
+
+// Configura o DbContext
 builder.Services.AddDbContext<Ficha2Context>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("Ficha2Context") ?? throw new InvalidOperationException("Connection string 'Ficha2Context' not found.")));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("Ficha2Context")
+        ?? throw new InvalidOperationException("Connection string 'Ficha2Context' not found.")));
 
-// Add services to the container.
-builder.Services.AddControllersWithViews();
-
-
-//add service to the new class BdIniciatizer
+// Registra o DbInitializer
 builder.Services.AddTransient<DbInitializer>();
+
+// Adiciona MVC
+builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
-using var scope = app.Services.CreateScope();
-var services=scope.ServiceProvider;
-var initializaer = services.GetRequiredService<DbInitializer>();
+// Limpa dados antigos (opcional)
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<Ficha2Context>();
+    TempClean.Run(context); // apaga os registros antigos
+}
 
-initializaer.run();
+// Inicializa dados de teste
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    var initializer = services.GetRequiredService<DbInitializer>();
+    initializer.run(); // popula o banco com dados iniciais
+}
 
-
-// Configure the HTTP request pipeline.
+// Configuração do pipeline HTTP
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-
 app.UseRouting();
-
 app.UseAuthorization();
 
 app.MapControllerRoute(
