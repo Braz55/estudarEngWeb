@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ficha3.Data;
 
@@ -11,9 +12,11 @@ using ficha3.Data;
 namespace ficha3.Migrations
 {
     [DbContext(typeof(ficha3Context))]
-    partial class ficha3ContextModelSnapshot : ModelSnapshot
+    [Migration("20251210232627_addcourse")]
+    partial class addcourse
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

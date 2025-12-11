@@ -15,5 +15,6 @@ namespace ficha3.Data
         }
 
         public DbSet<ficha3.Models.Category> Category { get; set; } = default!;
+        public DbSet<ficha3.Models.Course> Courses { get; set; }
     }
 }
