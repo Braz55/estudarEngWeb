@@ -22,7 +22,9 @@ namespace ficha3.Controllers
         // GET: Categories
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Category.ToListAsync());
+            // Prepara a consulta com os "filhos" (Eager Loading)
+            var listaCursos = _context.Category.Include(c => c.courses);    //para podermos carregar a lista de cursos associados a cada categoria
+            return View(await listaCursos.ToListAsync());
         }
 
         // GET: Categories/Details/5

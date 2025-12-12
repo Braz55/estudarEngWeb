@@ -48,7 +48,8 @@ namespace ficha3.Controllers
         // GET: Courses/Create
         public IActionResult Create()
         {
-            ViewData["categoryId"] = new SelectList(_context.Category, "id", "name");
+            var categoriasFiltradas = _context.Category.Where(c => c.State == true).ToList();       //para selecionar apenas as categorias ativas importante!!!!1
+            ViewData["categoryId"] = new SelectList(categoriasFiltradas, "id", "name");             //isto cria uma lista de seleçao para o dropdownlist com apenas as categorias ativas
             return View();
         }
 
@@ -82,7 +83,8 @@ namespace ficha3.Controllers
             {
                 return NotFound();
             }
-            ViewData["categoryId"] = new SelectList(_context.Category, "id", "name", course.categoryId);
+            var categoriasFiltradas = _context.Category.Where(c => c.State == true).ToList();
+            ViewData["categoryId"] = new SelectList(categoriasFiltradas, "id", "name", course.categoryId);
             return View(course);
         }
 

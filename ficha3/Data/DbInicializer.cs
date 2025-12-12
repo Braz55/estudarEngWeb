@@ -24,7 +24,7 @@ namespace ficha3.Data
             {
                 new Category { name = "programacao", description="programacao e cenas de nerd" },
                 new Category { name = "administaçao", description="dinheiro e cenas de beto" },
-                new Category { name = "comunicacao", description="falar e cenas de " }
+                new Category { name = "comunicacao", description="falar e cenas de ", State=false }
 
             };
 
