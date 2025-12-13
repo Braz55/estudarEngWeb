@@ -1,4 +1,9 @@
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using ficha5.Data;
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddDbContext<ficha5Context>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("ficha5Context") ?? throw new InvalidOperationException("Connection string 'ficha5Context' not found.")));
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();

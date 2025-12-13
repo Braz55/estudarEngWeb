@@ -1,0 +1,92 @@
+﻿/* ================================================================
+   🔥 CHECKLIST DE SOBREVIVÊNCIA: UPLOAD DE FICHEIROS (ASP.NET CORE)
+   ================================================================
+*/
+
+// --- PASSO 1: O VIEWMODEL (Mala de Transporte) ---
+// Criar uma classe nova. Não mexer na classe original da BD!
+public class ProdutoViewModel 
+{
+    public string Nome { get; set; }
+    
+    // OBRIGATÓRIO: Tem de ser IFormFile para receber o ficheiro
+    public IFormFile FotoUpload { get; set; } 
+}
+
+
+// --- PASSO 2: A INJEÇÃO DE DEPENDÊNCIA (No Controller) ---
+// Sem isto, não sabes onde guardar o ficheiro!
+public class ProdutosController : Controller
+{
+    private readonly ApplicationContext _context;       // Para falar com a BD
+    private readonly IWebHostEnvironment _webHostEnv;   // <--- O GPS DAS PASTAS!
+
+    public ProdutosController(ApplicationContext context, IWebHostEnvironment env)
+    {
+        _context = context;
+        _webHostEnv = env; // Guardar o GPS para usar mais tarde
+    }
+
+
+    // --- PASSO 3: O MÉTODO CREATE (POST) ---
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Create(ProdutoViewModel model)
+    {
+        // 3.1. VERIFICAÇÃO DE SEGURANÇA (Extensões)
+        // Define o que aceitas. Se for PDF, mudas para ".pdf"
+        string[] extensoesPermitidas = { ".jpg", ".png", ".jpeg" }; 
+        string extensaoFicheiro = Path.GetExtension(model.FotoUpload.FileName).ToLower();
+
+        if (!extensoesPermitidas.Contains(extensaoFicheiro))
+        {
+            ModelState.AddModelError("FotoUpload", "Extensão inválida!");
+        }
+
+        if (ModelState.IsValid)
+        {
+            // 3.2. PREPARAR CAMINHO NO DISCO
+            // Gerar nome único para não haver conflitos (Guid)
+            string nomeUnico = Guid.NewGuid().ToString() + extensaoFicheiro;
+            
+            // Usar o _webHostEnv para chegar à pasta wwwroot/images
+            string caminhoPasta = Path.Combine(_webHostEnv.WebRootPath, "images");
+            string caminhoCompleto = Path.Combine(caminhoPasta, nomeUnico);
+
+            // 3.3. GRAVAR O FICHEIRO (O Momento da Cópia)
+            // 'using' garante que o ficheiro fecha mesmo se der erro
+            using (var stream = new FileStream(caminhoCompleto, FileMode.Create))
+            {
+                await model.FotoUpload.CopyToAsync(stream);
+            }
+
+            // 3.4. GRAVAR NA BASE DE DADOS
+            // Passar dados do ViewModel para a Entidade Real
+            Produto novoProduto = new Produto();
+            novoProduto.Nome = model.Nome;
+            
+            // ATENÇÃO: Na BD só guardamos o NOME (string), não o ficheiro!
+            novoProduto.CaminhoFoto = nomeUnico; 
+
+            _context.Add(novoProduto);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        return View(model);
+    }
+}
+
+
+/* --- PASSO 4: A VIEW (O HTML) ---
+   Não esquecer o 'enctype', senão o ficheiro não sai do PC do utilizador!
+   
+   @model ProdutoViewModel
+
+   <form asp-action="Create" enctype="multipart/form-data">
+       <input asp-for="Nome" />
+       <input asp-for="FotoUpload" type="file" />
+       <button type="submit">Gravar</button>
+   </form>
+*/
