@@ -1,0 +1,40 @@
+﻿@{
+	ViewData["Title"] = "Index";
+}
+
+<h1>Student list</h1>
+@if (string.IsNullOrEmpty(ViewBag.letter) == false)      //se ViewBag.letter n estiver vazio ou nulo
+{
+	<p>names started by '@ViewBag.letter'</p>
+	//mostra a letra que foi selecionada
+}
+else
+{
+	<p>all names</p>
+	//se n tiver letra selecionada mostra all names
+}
+@if (string.IsNullOrEmpty(ViewBag.letter))       //se ViewBag.letter estiver vazio ou nulo
+{
+	<span style="color:red; font-weight:bold"> all &nbsp;|&nbsp; </span>
+	//mostra all a vermelho
+}
+else
+{
+	<span><a asp-route="filtered" asp-route-letter="">All</a>&nbsp;|&nbsp;</span>
+	//link para todas as letras
+}
+
+@for (char c = 'A'; c <= 'Z'; c++)       //ciclo para mostrar as letras de A a Z na pagina
+{
+	if (ViewBag.letter == "" + c)
+	{
+		<span style="color:red; font-weight:bold"> @c &nbsp;|&nbsp; </span>
+	}
+	else
+	{
+		<span><a asp-route="filtered" asp-route-letter="@c">@c</a>&nbsp;|&nbsp;</span>
+	}
+}
+
+<partial name="Listing" model="Model" /> @*serve para usar o conteudo de outra view, usado quando esse conteudo é partilhado por varias views ent para n ter que alterar em todas elas basta alterar na view Listing *@
+

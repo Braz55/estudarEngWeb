@@ -1,0 +1,38 @@
+﻿@model IEnumerable<ficha6.Models.Student>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Number)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th>
+				@Html.DisplayNameFor(model => model.Class)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Number)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+					@Html.DisplayFor(modelItem => item.Class)
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+
+@*para criar esta view partilhada usei a cena razor, com o template List e selecionei "criar como uma oartial view"*@

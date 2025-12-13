@@ -1,0 +1,42 @@
+﻿@{
+    ViewData["Title"] = "Index3 - Ordenação";
+}
+
+<h1>Students List (Ordered)</h1>
+
+<p>
+	@if (string.IsNullOrEmpty(ViewBag.order))   //se ViewBag.order estiver vazio ou nulo ele vai mostrar Original a vermelho
+    {
+        <span style="color:red; font-weight:bold">Original</span>
+    }
+    else
+    {
+		<a asp-action="Index3" asp-route-order="">Original</a>
+		//link para mostrar a ordem original
+    }
+
+    <span>&nbsp;|&nbsp;</span>
+
+	@if (ViewBag.order == "ascendente")     //se ViewBag.order for igual a ascendente ele vai mostrar Ascendente a vermelho
+    {
+        <span style="color:red; font-weight:bold">Ascendente (A-Z)</span>
+    }
+    else
+    {
+        <a asp-action="Index3" asp-route-order="ascendente">Ascendente (A-Z)</a>
+		//link para mostrar a ordem ascendente "ascendente" é o valor que vai ser passado para o controlador e A-Z é o texto que vai aparecer na pagina
+    }
+
+    <span>&nbsp;|&nbsp;</span>
+
+    @if (ViewBag.Order == "descendente")  // Verifica se a ordem é descendente
+    {
+        <span style="color:red; font-weight:bold">Descendente (Z-A)</span>
+    }
+    else
+    {
+        <a asp-action="Index3" asp-route-order="descendente">Descendente (Z-A)</a>
+    }
+</p>
+
+<partial name="Listing" model="Model" />
